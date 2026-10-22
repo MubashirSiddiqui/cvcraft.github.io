@@ -1,0 +1,37 @@
+# Checks the full app on every push and pull request.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+      - name: Syntax check
+        run: |
+          node --check server.js db.js
+          for f in ../public/js/*.js; do node --check "$f"; done
+      - name: Smoke test
+        env:
+          ALLOW_DEV_LOGIN: "true"
+          PORT: "3100"
+          DB_PATH: /tmp/ci.db
+        run: |
+          node server.js & sleep 2
+          curl -fs localhost:3100/ >/dev/null
+          curl -fs localhost:3100/api/config
+          curl -fs -c jar -H 'Content-Type: application/json' -d '{"email":"ci@example.com"}' localhost:3100/api/auth/dev
+          curl -fs -b jar -H 'Content-Type: application/json' -d '{"title":"CI"}' localhost:3100/api/cvs
+          curl -fs -b jar localhost:3100/api/cvs
