@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in – CVCraft</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body class="auth-body">
+  <aside class="auth-side">
+    <a class="brand" href="/" style="display:flex;gap:9px;align-items:center;text-decoration:none;font:700 20px 'Bricolage Grotesque',sans-serif;color:#fff"><span class="logo2">CV</span>CVCraft</a>
+    <div>
+      <h2>Your CVs, saved and ready on any device.</h2>
+      <p>Sign in once and pick up where you left off. We only receive your name, email and profile picture.</p>
+    </div>
+    <span></span>
+  </aside>
+  <main class="auth-main">
+    <div class="auth-card">
+      <h1>Sign in</h1>
+      <p>Continue with your Google account to open your dashboard.</p>
+      <div id="gbtn" aria-label="Sign in with Google"></div>
+      <div class="msg" id="msg" role="status"></div>
+      <form class="dev" id="devForm" hidden>
+        <small>Local development only</small>
+        <input type="email" id="devEmail" value="dev@example.com" aria-label="Test email">
+        <button class="btn2 sm" type="submit">Sign in as test user</button>
+      </form>
+      <p style="margin-top:28px;font-size:14px"><a href="/">← Back to home</a></p>
+    </div>
+  </main>
+  <script src="js/login.js"></script>
+</body>
+</html>

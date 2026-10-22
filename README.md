@@ -1,25 +1,40 @@
-# CVCraft – region-ready CV builder
+# CVCraft – landing page, Google sign-in, dashboard and CV builder
 
-Static website (no server needed). Open `index.html`, or `CVCraft.html` (everything in one file). Deploy free on Cloudflare Pages / Netlify / Vercel.
+```
+public/            landing (index.html), login.html, dashboard.html, editor.html (your builder), css/, js/, vendor/
+server/            Node + Express API, SQLite database, Google sign-in
+```
 
-## Regions (js/profiles.js)
-Middle East (GCC), USA / Canada (US Letter), UK / Ireland, Europe (DE/FR/NL/ES/IT), Australia / NZ (referees), South Asia (PK/IN/BD/LK).
-Each profile controls form fields, labels, section order per experience level, paper size, page length, photo policy, country tips and recommended layouts. Add a region by adding a `makeProfile({...})` entry.
+## Run it locally
+```bash
+cd server
+npm install
+cp .env.example .env        # then edit .env
+npm run dev                 # needs Node 22.13 or newer (uses its built-in SQLite). Dev mode: shows a "test user" login so you can try everything without Google
+```
+Open http://localhost:3000
 
-## Features
-- 7 layouts (Classic, Sidebar Pro, Modern Banner, Executive Serif, Compact Timeline, ATS Simple, Europass Style) x 12 colours x 5 font pairs = 420 looks
-- Live A4 / Letter preview with page-break guides; blocks never cut across pages
-- CV health check (region-aware score), summary drafter, bullet-quality hints, region format guide
-- Save / open CV as a .json file (works on any device, no account needed)
-- Free: JPG with watermark. Premium: PDF (selectable text), Word (.docx), clean JPG
+## Turn on real Google sign-in
+1. Google Cloud Console → APIs & Services → Credentials → Create credentials → **OAuth client ID** → type **Web application**.
+2. Under **Authorized JavaScript origins** add `http://localhost:3000` (and your real domain later, e.g. `https://yourdomain.com`).
+3. Put the client ID in `server/.env` as `GOOGLE_CLIENT_ID=...`, set `APP_URL` to your site URL, and run `npm start`.
+   (You may need to configure the OAuth consent screen first; "External" + "Testing" with your own email as a test user is enough to start.)
 
-## Files
-- `js/profiles.js` region rules · `js/templates.js` + `css/templates.css` layouts · `js/export.js` JPG/PDF/Word
-- `js/app.js` wizard and features · `js/config.js` price, watermark, checkout link, paywall switch
+## How it works
+- `/` landing → `/login` (Google) → `/dashboard` (your CVs) → `/editor?id=…` (your builder).
+- The editor autosaves to the server as you type. The old "Save file / Open file" buttons still work.
+- Database: one SQLite file at `server/data/cvcraft.db` (tables: users, sessions, cvs). Back this file up; on a host, put it on a persistent disk or set `DB_PATH`.
+- Sessions use a random token in an HttpOnly cookie (30 days); only a hash is stored.
 
-## Before going live
-1. Payments: set `checkoutUrl` and set `demoUnlock:false`. The paywall is browser-side and can be bypassed; real enforcement needs a small backend that verifies payment. Check Paddle / Lemon Squeezy / Safepay availability for Pakistan.
-2. Accounts, cloud-saved CVs and AI-written text also need a backend; this version saves to the browser and to .json files.
-3. Fonts load from Google Fonts (needs internet).
-4. Word export is one clean single-column layout (colour and font follow your choice).
-5. PDF: in the print dialog choose the paper size shown, margins None, background graphics on.
+## Premium / payments
+Premium status is now stored per account on the server. To grant it after a payment:
+`npm run grant-premium -- someone@gmail.com` (add `off` to remove).
+For automatic upgrades, add your payment provider's webhook endpoint in `server/server.js` that sets `premium = 1` for the buyer's email.
+Note: PDF/Word/JPG are still generated in the browser, so a technical user could bypass the paywall. Real enforcement means generating the files on the server.
+Set `ALLOW_DEMO_UNLOCK=false` (default) in production. Set `checkoutUrl` and the price in `public/js/config.js`.
+
+## Deploying
+Any host that runs Node (Render, Railway, Fly.io, a VPS). Set the env vars from `.env.example`, keep `ALLOW_DEV_LOGIN` and `ALLOW_DEMO_UNLOCK` off, and serve over HTTPS.
+Cloudflare Pages / Netlify alone won't work now, because the app needs the server.
+
+(Original builder notes: `README.old.md`.)

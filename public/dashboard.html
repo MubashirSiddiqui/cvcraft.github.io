@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard – CVCraft</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <header class="dash-top"><div class="wrap">
+    <a class="brand" href="/dashboard" style="display:flex;gap:9px;align-items:center;text-decoration:none;font:700 20px 'Bricolage Grotesque',sans-serif"><span class="logo2">CV</span>CVCraft</a>
+    <div class="me" id="me"></div>
+  </div></header>
+  <main class="wrap">
+    <div class="dash-h">
+      <div><h1>Your CVs</h1><p id="count">Loading…</p></div>
+      <button class="btn2 solid" id="newBtn">New CV</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
